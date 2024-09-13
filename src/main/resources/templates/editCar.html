@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<form action="/admin/save" method="get">
+
+  <label for="price">Ár:</label>
+  <input type="number" id="price" name="price" required th:value="${car.price}" ><br><br>
+
+  <label for="type">Cím:</label>
+  <input type="text" id="type" name="type" required th:value="${car.type}" ><br><br>
+
+
+  <label for="availableYes">Elérhető az autó?</label><br>
+  <input type="radio" id="availableYes" name="available" value="true" th:checked="${car.available}"> Igen<br>
+  <input type="radio" id="availableNo" name="available" value="false" th:checked="${!car.available}"> Nem<br><br>
+
+
+  <input type="hidden" id="carId" name="carId" readonly th:value="${car.id}">
+
+  <input type="submit" value="Mentés">
+
+</form>
+</body>
+</html>

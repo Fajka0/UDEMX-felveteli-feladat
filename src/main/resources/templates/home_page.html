@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Autó bérlés</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        .ui-datepicker-trigger {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Üdvözlöm a FajkaRent oldalán</h1>
+<form method="get" action="/home_page" >
+    <label for="start-date">Bérlés kezdete:</label>
+    <input type="text" id="start-date" name="startDate" th:value="${startDate}">
+
+    <label for="end-date">Vérlés vége:</label>
+    <input type="text" id="end-date" name="endDate" th:value="${endDate}">
+
+    <button type="submit">Autók listázása</button>
+</form>
+
+<script>
+    $(function() {
+        $("#start-date, #end-date").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: function(selectedDate) {
+                var option = this.id === "start-date" ? "minDate" : "maxDate",
+                    instance = $(this).data("datepicker"),
+                    date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+
+                $("#start-date, #end-date").not(this).datepicker("option", option, date);
+            }
+        });
+    });
+</script>
+
+
+<p th:if="${#lists.isEmpty(cars)}"><h2>Válassz intervallumot mikor szertnél autót bérelni.</h2></p>
+
+<div th:if="${cars != null}">
+<h1>Szabad Autók:</h1>
+    <table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Ar</th>
+        <th>Tipus</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="car : ${cars}">
+        <td th:text="${car.id}"></td>
+        <td th:text="${car.price}"></td>
+        <td th:text="${car.type}"></td>
+        <td>
+            <a th:href="@{/home_page/{id}(id=${car.id}, startDate=${startDate}, endDate=${endDate})}">Berles</a>
+        </td>
+
+
+
+    </tr>
+    </tbody>
+</table>
+</div>
+
+
+<div th:if="${rentCar != null}">
+    <h1>Foglalási Űrlap</h1>
+    <form action="/submit_rent" method="get">
+
+        <label for="name">Név:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email cím:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="address">Cím:</label>
+        <input type="text" id="address" name="address" required><br><br>
+
+        <label for="phone">Telefonszám:</label>
+        <input type="tel" id="phone" name="phone" required><br><br>
+
+        <label for="days">Foglalás napok száma:</label>
+        <input type="number" id="days" name="days" readonly><br><br>
+
+        <label for="price">Foglalás teljes összege (HUF):</label>
+        <input type="number" id="price" name="price" readonly><br><br>
+
+        <div class="hidden-field">
+            <input type="hidden" id="carId" name="carId" readonly th:value="${rentCar.id}">
+            <input type="hidden" id="startDate" name="startDate" readonly th:value="${startDate}">
+            <input type="hidden" id="endDate" name="endDate" readonly th:value="${endDate}">
+        </div>
+
+
+        <input type="submit" value="Foglalás elküldése">
+    </form>
+
+    <div id="carPrice" th:text="${rentCar.price}" style="display: none;"></div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const startDate = new Date(urlParams.get('startDate'));
+        const endDate = new Date(urlParams.get('endDate'));
+        var pricePerDayElement = document.getElementById('carPrice');
+        var pricePerDayText = pricePerDayElement.textContent || pricePerDayElement.innerText;
+        var pricePerDayNumber = parseFloat(pricePerDayText);
+
+        const timeDifference = Math.abs(endDate - startDate);
+        const days = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+        document.getElementById('days').value = days;
+        document.getElementById('price').value = days * pricePerDayNumber;
+    </script>
+
+</div>
+</body>
+</html>

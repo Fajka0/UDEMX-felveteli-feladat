@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Üdvözlom az admin felületen</h1>
+<h2>Autók</h2>
+<table border="1">
+  <thead>
+  <tr>
+    <th >Id</th>
+    <th>Ar</th>
+    <th>Tipus</th>
+    <th>Elérhető</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="car : ${cars}">
+    <td th:text="${car.id}"></td>
+    <td th:text="${car.price}"></td>
+    <td th:text="${car.type}"></td>
+    <td th:text="${car.available}"></td>
+    <td>
+      <a th:href="@{/editCar (id=${car.id})}">Modositas</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<br><br><br><br>
+<form action="/admin/newcar" method="get">
+
+  <label for="price">Ár:</label>
+  <input type="number" id="price" name="price" required><br><br>
+
+  <label for="type">Cím:</label>
+  <input type="text" id="type" name="type" required><br><br>
+
+  <input type="submit" value="Auto hozzáadása">
+
+</form>
+<br><br><br><br>
+<table border="1">
+  <thead>
+  <tr>
+    <th >Id</th>
+    <th>Bérlés Kezete</th>
+    <th>Bérlés Vége</th>
+    <th>Bérlő Neve</th>
+    <th>Bérlő Telefon Száma</th>
+    <th>Autó Tipúsa</th>
+    <th>Autó Ára</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="rent : ${rents}">
+    <td th:text="${rent.id}"></td>
+    <td th:text="${rent.startDate}"></td>
+    <td th:text="${rent.endDate}"></td>
+    <td th:text="${rent.client.name}"></td>
+    <td th:text="${rent.client.phone}"></td>
+    <td th:text="${rent.car.type}"></td>
+    <td th:text="${rent.car.price}"></td>
+  </tr>
+  </tbody>
+</table>
+
+
+
+</body>
+</html>
